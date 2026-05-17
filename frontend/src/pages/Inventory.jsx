@@ -42,11 +42,19 @@ const Inventory = () => {
           <h1 className="text-2xl font-bold text-slate-800">Manajemen Inventaris</h1>
           <p className="text-slate-500 mt-1">Kelola daftar stok barang satuan dan paket bundling Anda.</p>
         </div>
-        <button className={`inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium ${
+        {/* Desktop Button */}
+        <button className={`hidden sm:inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow ${
           activeTab === 'items' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-purple-600 hover:bg-purple-700'
         }`}>
           <Plus size={20} />
           {activeTab === 'items' ? 'Tambah Barang' : 'Tambah Paket'}
+        </button>
+
+        {/* Mobile FAB */}
+        <button className={`sm:hidden fixed bottom-20 right-4 z-40 p-4 rounded-full text-white shadow-lg transition-transform active:scale-95 ${
+          activeTab === 'items' ? 'bg-blue-600 shadow-blue-200' : 'bg-purple-600 shadow-purple-200'
+        }`}>
+          <Plus size={24} />
         </button>
       </div>
 
@@ -89,87 +97,166 @@ const Inventory = () => {
           </div>
         </div>
         
-        {/* Table Content */}
-        <div className="overflow-x-auto">
+        {/* Content Area */}
+        <div>
           {activeTab === 'items' ? (
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500">
-                <tr>
-                  <th className="py-4 px-6 font-medium">Nama Barang</th>
-                  <th className="py-4 px-6 font-medium">Harga Sewa</th>
-                  <th className="py-4 px-6 font-medium">Total Stok</th>
-                  <th className="py-4 px-6 font-medium">Tersedia</th>
-                  <th className="py-4 px-6 font-medium text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-slate-50 text-slate-500">
+                    <tr>
+                      <th className="py-4 px-6 font-medium">Nama Barang</th>
+                      <th className="py-4 px-6 font-medium">Harga Sewa</th>
+                      <th className="py-4 px-6 font-medium">Total Stok</th>
+                      <th className="py-4 px-6 font-medium">Tersedia</th>
+                      <th className="py-4 px-6 font-medium text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {dummyItems.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-4 px-6 font-medium text-slate-800">{item.name}</td>
+                        <td className="py-4 px-6 text-slate-600">Rp {item.price.toLocaleString('id-ID')}</td>
+                        <td className="py-4 px-6 text-slate-600">{item.stock}</td>
+                        <td className="py-4 px-6">
+                          <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+                            item.available === 0 ? 'bg-rose-100 text-rose-700' : 
+                            item.available < item.stock * 0.2 ? 'bg-amber-100 text-amber-700' : 
+                            'bg-emerald-100 text-emerald-700'
+                          }`}>
+                            {item.available}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+                              <Edit2 size={18} />
+                            </button>
+                            <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50">
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden p-4 space-y-4 bg-slate-50/50">
                 {dummyItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-4 px-6 font-medium text-slate-800">{item.name}</td>
-                    <td className="py-4 px-6 text-slate-600">Rp {item.price.toLocaleString('id-ID')}</td>
-                    <td className="py-4 px-6 text-slate-600">{item.stock}</td>
-                    <td className="py-4 px-6">
+                  <div key={item.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-slate-800 text-base">{item.name}</h3>
+                        <p className="text-slate-500 text-sm mt-0.5">Rp {item.price.toLocaleString('id-ID')} / hari</p>
+                      </div>
                       <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
                         item.available === 0 ? 'bg-rose-100 text-rose-700' : 
                         item.available < item.stock * 0.2 ? 'bg-amber-100 text-amber-700' : 
                         'bg-emerald-100 text-emerald-700'
                       }`}>
-                        {item.available}
+                        {item.available} Tersedia
                       </span>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
-                          <Edit2 size={18} />
+                    </div>
+                    
+                    <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
+                      <span className="text-sm text-slate-500">Total Stok: <span className="font-medium text-slate-700">{item.stock}</span></span>
+                      <div className="flex gap-1">
+                        <button className="p-1.5 text-slate-400 hover:text-blue-600 bg-slate-50 rounded-lg">
+                          <Edit2 size={16} />
                         </button>
-                        <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50">
-                          <Trash2 size={18} />
+                        <button className="p-1.5 text-slate-400 hover:text-rose-600 bg-slate-50 rounded-lg">
+                          <Trash2 size={16} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500">
-                <tr>
-                  <th className="py-4 px-6 font-medium">Nama Paket</th>
-                  <th className="py-4 px-6 font-medium">Harga Paket</th>
-                  <th className="py-4 px-6 font-medium">Komposisi Barang</th>
-                  <th className="py-4 px-6 font-medium text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-slate-50 text-slate-500">
+                    <tr>
+                      <th className="py-4 px-6 font-medium">Nama Paket</th>
+                      <th className="py-4 px-6 font-medium">Harga Paket</th>
+                      <th className="py-4 px-6 font-medium">Komposisi Barang</th>
+                      <th className="py-4 px-6 font-medium text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {dummyPackages.map((pkg) => (
+                      <tr key={pkg.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-4 px-6 font-medium text-slate-800 align-top">{pkg.name}</td>
+                        <td className="py-4 px-6 text-slate-600 align-top font-medium text-purple-700">Rp {pkg.price.toLocaleString('id-ID')}</td>
+                        <td className="py-4 px-6">
+                          <ul className="space-y-1">
+                            {pkg.items.map((item, idx) => (
+                              <li key={idx} className="text-slate-600 flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                {item.name} <span className="text-slate-400 text-xs font-medium">x{item.qty}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td className="py-4 px-6 text-right align-top">
+                          <div className="flex items-center justify-end gap-2">
+                            <button className="p-2 text-slate-400 hover:text-purple-600 transition-colors rounded-lg hover:bg-purple-50">
+                              <Edit2 size={18} />
+                            </button>
+                            <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50">
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden p-4 space-y-4 bg-slate-50/50">
                 {dummyPackages.map((pkg) => (
-                  <tr key={pkg.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-4 px-6 font-medium text-slate-800 align-top">{pkg.name}</td>
-                    <td className="py-4 px-6 text-slate-600 align-top font-medium text-purple-700">Rp {pkg.price.toLocaleString('id-ID')}</td>
-                    <td className="py-4 px-6">
-                      <ul className="space-y-1">
+                  <div key={pkg.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-bold text-slate-800 text-base leading-tight pr-4">{pkg.name}</h3>
+                      <div className="flex gap-1 shrink-0">
+                        <button className="p-1.5 text-slate-400 hover:text-purple-600 bg-slate-50 rounded-lg">
+                          <Edit2 size={16} />
+                        </button>
+                        <button className="p-1.5 text-slate-400 hover:text-rose-600 bg-slate-50 rounded-lg">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <p className="text-purple-700 font-semibold text-sm">Rp {pkg.price.toLocaleString('id-ID')}</p>
+                    
+                    <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                      <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Komposisi:</p>
+                      <ul className="space-y-1.5">
                         {pkg.items.map((item, idx) => (
-                          <li key={idx} className="text-slate-600 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
-                            {item.name} <span className="text-slate-400 text-xs font-medium">x{item.qty}</span>
+                          <li key={idx} className="text-slate-700 text-sm flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                              {item.name}
+                            </span>
+                            <span className="text-slate-500 font-medium">x{item.qty}</span>
                           </li>
                         ))}
                       </ul>
-                    </td>
-                    <td className="py-4 px-6 text-right align-top">
-                      <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-slate-400 hover:text-purple-600 transition-colors rounded-lg hover:bg-purple-50">
-                          <Edit2 size={18} />
-                        </button>
-                        <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50">
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
       </div>
